@@ -1,5 +1,5 @@
-const Authors = (props) => {
-  const authors = []
+const Authors = ({list}) => {
+  const authors = list
 
   return (
     <div>

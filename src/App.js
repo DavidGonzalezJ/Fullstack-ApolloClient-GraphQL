@@ -1,12 +1,27 @@
 import { useState } from 'react'
 import {  Routes, Route, useNavigate
   } from 'react-router-dom'
+import { gql, useQuery } from '@apollo/client'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 
+const ALL_AUTHORS = gql`
+  query {
+    allAuthors {
+      name
+      born
+      bookCount
+    }
+  }
+`
+
 const App = () => {
   const navigate = useNavigate()
+  const authorsResult = useQuery(ALL_AUTHORS)
+
+  if(authorsResult.loading)
+    return <div>loading...</div>
 
   return (
     <div>
@@ -19,7 +34,7 @@ const App = () => {
 
       <Routes>
         <Route path="/" element={<h1>Main Page</h1>}/>
-        <Route path="/authors" element={<Authors/>} />
+        <Route path="/authors" element={<Authors list={authorsResult.data.allAuthors}/>} />
         <Route path="/books" element={<Books/>} />
         <Route path="/add" element={<NewBook/>} />
       </Routes>      
