@@ -1,17 +1,18 @@
 import { UPDATE_BIRTHYEAR, ALL_AUTHORS } from "../queries"
 import { useState } from "react"
 import { useMutation } from "@apollo/client"
+import Select from "react-select"
 
-const BirthForm = () => {
+const BirthForm = ({authors}) => {
   const [name, setName] = useState('')
   const [birth, setBirth] = useState('')
+  const selectOptions = authors.map(a => { return { value: a.name, label: a.name} })
 
   const [updateAuthor] = useMutation(UPDATE_BIRTHYEAR, {
     refetchQueries: [{query:ALL_AUTHORS}],
     onError: (error) => {
       const messages = error.graphQLErrors.map(e => e.message).join('\n')
       console.log(messages)
-      console.log('WUT')
     }
   })
 
@@ -24,17 +25,18 @@ const BirthForm = () => {
     setBirth('')
   }
 
+  const handleSelect = (selectedOption) => {
+    setName(selectedOption.value)
+  }
+
   return (
     <>
       <h3>Set birthyear</h3>
       <form onSubmit={submit}>
-        <div>
-          name
-          <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
-          />
-        </div>
+        <Select 
+          options={selectOptions}
+          onChange={handleSelect}
+        />
         <div>
           born
           <input
@@ -70,7 +72,7 @@ const Authors = ({list}) => {
           ))}
         </tbody>
       </table>
-      <BirthForm />
+      <BirthForm authors={authors}/>
 
     </div>
   )
