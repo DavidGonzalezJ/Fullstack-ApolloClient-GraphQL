@@ -1,5 +1,5 @@
-const Books = (props) => {
-  const books = []
+const Books = ({list}) => {
+  const books = list
 
   return (
     <div>
