@@ -1,11 +1,11 @@
 import {  Routes, Route, useNavigate
   } from 'react-router-dom'
-import { useQuery, useApolloClient } from '@apollo/client'
+import { useQuery, useApolloClient, useSubscription } from '@apollo/client'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
-import { ALL_AUTHORS, ALL_BOOKS } from './queries'
+import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED } from './queries'
 import { useState } from 'react'
 import Recommend from './components/Recommend'
 
@@ -18,6 +18,13 @@ const App = () => {
   const authorsResult = useQuery(ALL_AUTHORS)
   const booksResult = useQuery(ALL_BOOKS)
 
+  useSubscription(BOOK_ADDED, {
+    onData: ({data}) => {
+      console.log(data)
+      window.alert(`The book ${data.data.bookAdded.title} has been added!`)
+    }
+  })
+
   if(authorsResult.loading || booksResult.loading)
     return <div>loading...</div>
 
@@ -27,7 +34,8 @@ const App = () => {
         <button onClick={() => navigate('/authors')}>authors</button>
         <button onClick={() => navigate('/books')}>books</button>
         {token && 
-          <button onClick={() => navigate('/add')}>add book</button> &&
+          <button onClick={() => navigate('/add')}>add book</button> }
+        {token &&
           <button onClick={() => navigate('/recommend')}>recommend</button>
         }
         {!token && <button onClick={() => navigate('/login')}>login</button>}
